@@ -2,6 +2,7 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import prisma from './prisma/client.js' // Importing the Prisma client
 
 dotenv.config()
 
@@ -17,4 +18,19 @@ app.get('/api/health', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`)
+})
+
+// Ruta: GET /api/properties
+app.get('/api/properties', async (req, res) => {
+  try {
+    const properties = await prisma.property.findMany({
+      include: {
+        user: true, // incluye datos del dueño (opcional)
+      },
+    })
+    res.json(properties)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Error al cargar las propiedades' })
+  }
 })
