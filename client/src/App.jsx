@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react'
 import CreatePropertyForm from './CreatePropertyForm' 
+// En App.jsx, arriba del formulario de propiedad
+import LoginForm from './LoginForm'
+
 
 function App() {
   const [properties, setProperties] = useState([])
@@ -21,10 +24,10 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-        Airbnb Clone
+        Kassa
       </h1>
 
-      {/* Formulario para publicar */}
+      <LoginForm />
       <CreatePropertyForm />
 
       {/* Lista de propiedades */}
