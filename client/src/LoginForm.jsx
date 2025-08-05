@@ -26,7 +26,7 @@ export default function LoginForm() {
         localStorage.setItem('authToken', result.token)
         localStorage.setItem('user', JSON.stringify(result.user))
         setMessage(`✅ ${isLogin ? 'Bienvenido' : 'Registrado'} ${result.user.name || ''}`)
-        //window.location.reload() // Refresca para que el estado cambie
+        window.location.reload() // Refresca para que el estado cambie
         localStorage.setItem('authToken', result.token)
       } else {
         setMessage(`Error: ${result.error}`)
