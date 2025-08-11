@@ -1,7 +1,7 @@
-// client/src/CreatePropertyForm.jsx
+// client/src/features/listings/CreateListingForm.jsx
 import { useState } from 'react'
 
-export default function CreatePropertyForm() {
+export default function CreateListingForm() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -37,7 +37,7 @@ export default function CreatePropertyForm() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/properties', {
+      const response = await fetch('http://localhost:5000/api/listings', { // <-- Endpoint corregido
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

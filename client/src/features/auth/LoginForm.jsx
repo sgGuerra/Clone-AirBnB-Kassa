@@ -1,10 +1,11 @@
-// client/src/LoginForm.jsx
 import { useState } from 'react'
+import { useAuth } from '../../hooks/AuthContext'
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: '', password: '' })
   const [message, setMessage] = useState('')
-  const [isLogin, setIsLogin] = useState(true) // true = login, false = register
+  const [isLogin, setIsLogin] = useState(true)
+  const { login } = useAuth()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -22,12 +23,8 @@ export default function LoginForm() {
       const result = await response.json()
 
       if (response.ok) {
-        // Guardar token y usuario
-        localStorage.setItem('authToken', result.token)
-        localStorage.setItem('user', JSON.stringify(result.user))
-        setMessage(`✅ ${isLogin ? 'Bienvenido' : 'Registrado'} ${result.user.name || ''}`)
-        window.location.reload() // Refresca para que el estado cambie
-        localStorage.setItem('authToken', result.token)
+        // Usar la función de login del contexto
+        login(result.user, result.token)
       } else {
         setMessage(`Error: ${result.error}`)
       }
