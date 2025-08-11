@@ -77,7 +77,7 @@ function App() {
               </button>
               <button
                 onClick={handleLogout}
-                className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"  
               >
                 Cerrar sesión
               </button>
