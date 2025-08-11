@@ -5,7 +5,7 @@ import App from './App.jsx'
 import HomePage from './pages/HomePage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
-import { AuthProvider } from './hooks/AuthContext.jsx'
+import { AuthProvider } from './contexts/AuthContext.jsx'
 import './index.css'
 
 const router = createBrowserRouter([
