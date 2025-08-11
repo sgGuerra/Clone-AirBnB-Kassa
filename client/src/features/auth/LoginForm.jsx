@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAuth } from '../../hooks/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: '', password: '' })

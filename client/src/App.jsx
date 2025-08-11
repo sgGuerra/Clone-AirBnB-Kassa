@@ -1,5 +1,5 @@
 import { Outlet, Link } from 'react-router-dom'
-import { useAuth } from './hooks/AuthContext'
+import { useAuth } from './hooks/useAuth'
 
 function App() {
   const { user, isAuthenticated, logout } = useAuth()

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import ListingCard from '../components/ListingCard';
 import CreateListingForm from '../features/listings/CreateListingForm';
 
