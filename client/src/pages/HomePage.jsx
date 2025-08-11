@@ -1,22 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useState, useEffect, useMemo } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import ListingCard from '../components/ListingCard';
-import CreateListingForm from '../features/listings/CreateListingForm';
 
 const HomePage = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth(); // Use the hook
+  const [error, setError] = useState(null);
+  const { searchTerm } = useOutletContext();
 
   useEffect(() => {
-    // Fetch listings
     const fetchListings = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/listings'); // Corrected endpoint
+        const response = await fetch('/api/listings');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         setListings(data);
       } catch (error) {
         console.error("Error fetching listings:", error);
+        setError("No se pudieron cargar los alojamientos. Por favor, intente de nuevo más tarde.");
       } finally {
         setLoading(false);
       }
@@ -25,30 +28,33 @@ const HomePage = () => {
     fetchListings();
   }, []);
 
+  const filteredListings = useMemo(() => {
+    if (!searchTerm) {
+      return listings;
+    }
+    return listings.filter((listing) =>
+      listing.location.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [listings, searchTerm]);
+
+  if (loading) {
+    return <div className="text-center py-10">🕵️‍♂️ Cargando alojamientos...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-10 text-red-500">{error}</div>;
+  }
+
   return (
     <div>
-      {/* Formulario de publicación (solo si el usuario es 'host') */}
-      {user && user.role === 'host' && (
-        <div className="max-w-2xl mx-auto mb-8">
-          <CreateListingForm />
+      {filteredListings.length === 0 ? (
+        <div className="text-center py-10">
+          <h2 className="text-2xl font-semibold text-gray-800">No se encontraron alojamientos</h2>
+          <p className="text-gray-500 mt-2">Intenta con otra ubicación o borra la búsqueda.</p>
         </div>
-      )}
-
-      {/* Listado de propiedades */}
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
-        Alojamientos disponibles
-      </h2>
-      {loading ? (
-        <p className="text-center text-gray-600 col-span-full py-8">
-          🕵️‍♂️ Cargando alojamientos...
-        </p>
-      ) : listings.length === 0 ? (
-        <p className="text-center text-gray-500 col-span-full py-8">
-          Aún no hay propiedades publicadas.
-        </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings.map((listing) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-6 gap-y-8">
+          {filteredListings.map((listing) => (
             <ListingCard key={listing.id} listing={listing} />
           ))}
         </div>

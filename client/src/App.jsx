@@ -1,49 +1,28 @@
-import { Outlet, Link } from 'react-router-dom'
-import { useAuth } from './hooks/useAuth'
+import { useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
 
 function App() {
-  const { user, isAuthenticated, logout } = useAuth()
+  // The search term state is lifted to the App component
+  // so it can be shared between the Header (where it's set)
+  // and the HomePage (where it's used to filter listings).
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <header className="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow">
-        <h1 className="text-3xl font-bold text-gray-800">
-          <Link to="/">Kassa</Link>
-        </h1>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* The Header receives the state and the function to update it. */}
+      <Header searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        <nav className="space-x-4 flex items-center">
-          <Link to="/" className="text-indigo-600 hover:underline font-medium">
-            Inicio
-          </Link>
-
-          {isAuthenticated ? (
-            <>
-              <span className="text-gray-700 font-medium">
-                Bienvenido, <strong>{user?.name || user?.email?.split('@')[0]}</strong>
-              </span>
-              <Link to="/profile" className="text-indigo-600 hover:underline font-medium">
-                Mi Perfil
-              </Link>
-              <button
-                onClick={logout}
-                className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
-              >
-                Cerrar sesión
-              </button>
-            </>
-          ) : (
-            <Link to="/login" className="text-indigo-600 hover:underline font-medium">
-              Iniciar Sesión
-            </Link>
-          )}
-        </nav>
-      </header>
-
-      <main>
-        <Outlet />
+      <main className="flex-grow container mx-auto p-4 sm:p-6">
+        {/* The Outlet renders the current route's component (e.g., HomePage),
+            and we pass the searchTerm down via its context. */}
+        <Outlet context={{ searchTerm }} />
       </main>
+
+      <Footer />
     </div>
-  )
+  );
 }
 
 export default App

@@ -1,102 +1,106 @@
-import { useState } from 'react'
-import { useAuth } from '../../hooks/useAuth'
+import { useState } from 'react';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function LoginForm() {
-  const [formData, setFormData] = useState({ email: '', password: '' })
-  const [message, setMessage] = useState('')
-  const [isLogin, setIsLogin] = useState(true)
-  const { login } = useAuth()
+  const [formData, setFormData] = useState({ email: '', password: '', name: '' });
+  const [error, setError] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setMessage('')
-    const url = `http://localhost:5000/api/auth/${isLogin ? 'login' : 'register'}`
-    const method = 'POST'
+    e.preventDefault();
+    setError('');
+    const url = `/api/auth/${isLogin ? 'login' : 'register'}`;
 
     try {
       const response = await fetch(url, {
-        method,
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
-      })
+      });
 
-      const result = await response.json()
+      const result = await response.json();
 
       if (response.ok) {
-        // Usar la función de login del contexto
-        login(result.user, result.token)
+        if (isLogin) {
+          login(result.user, result.token);
+        } else {
+          // After successful registration, switch to login view with a success message
+          setIsLogin(true);
+          // Maybe show a success message that they can now log in
+        }
       } else {
-        setMessage(`Error: ${result.error}`)
+        setError(result.error || 'Ocurrió un error.');
       }
     } catch (err) {
-      setMessage('Error de conexión')
-      console.error(err)
+      setError('Error de conexión. Por favor, intente de nuevo.');
     }
-  }
+  };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md mt-8">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-        {isLogin ? 'Iniciar Sesión' : 'Crear Cuenta'}
-      </h2>
+    <div className="max-w-md mx-auto mt-10">
+      <div className="bg-white p-8 rounded-xl shadow-lg">
+        <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
+          {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
+        </h2>
 
-      {message && (
-        <div className={`p-3 mb-6 rounded text-white ${message.includes('Error') || message.includes('inválidas') ? 'bg-red-500' : 'bg-green-500'}`}>
-          {message}
-        </div>
-      )}
-
-      <form onSubmit={handleSubmit}>
-        <div className="mb-5">
-          <label className="block text-gray-700 mb-2">Email *</label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        <div className="mb-5">
-          <label className="block text-gray-700 mb-2">Contraseña *</label>
-          <input
-            type="password"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-        </div>
-
-        {!isLogin && (
-          <div className="mb-5">
-            <label className="block text-gray-700 mb-2">Nombre (opcional)</label>
-            <input
-              type="text"
-              value={formData.name || ''}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+        {error && (
+          <div className="p-3 mb-4 rounded-md text-white bg-red-500 text-center">
+            {error}
           </div>
         )}
 
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded hover:bg-indigo-700 transition"
-        >
-          {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {!isLogin && (
+            <div>
+              <label className="block text-gray-700 font-semibold mb-1">Nombre</label>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+              />
+            </div>
+          )}
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Email</label>
+            <input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
 
-      <div className="mt-4 text-center">
-        <button
-          onClick={() => setIsLogin(!isLogin)}
-          className="text-indigo-600 hover:underline"
-        >
-          {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
-        </button>
+          <div>
+            <label className="block text-gray-700 font-semibold mb-1">Contraseña</label>
+            <input
+              type="password"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600 transition-transform transform hover:scale-105"
+          >
+            {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-red-500 hover:underline font-medium"
+          >
+            {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
+          </button>
+        </div>
       </div>
     </div>
-  )
+  );
 }
