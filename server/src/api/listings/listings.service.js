@@ -19,3 +19,9 @@ export const create = (listingData) => {
     data: listingData,
   })
 }
+
+export const remove = (id) => {
+  return prisma.property.delete({
+    where: { id },
+  })
+}

@@ -47,3 +47,14 @@ export const getProfile = async (req, res) => {
     res.status(500).json({ error: 'Error al cargar el perfil' })
   }
 }
+
+export const upgradeToHost = async (req, res) => {
+  try {
+    const updated = await service.setUserRole(req.user.userId, 'host')
+    const token = signToken(updated)
+    const { password: _, ...userWithoutPassword } = updated
+    res.json({ user: userWithoutPassword, token })
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}

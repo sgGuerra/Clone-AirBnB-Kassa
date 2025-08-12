@@ -10,3 +10,11 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+
+## Credenciales
+'''
+DATABASE_URL="postgresql://neondb_owner:npg_JGKPMfY4v9Rs@ep-blue-sea-acn4c4xz-pooler.sa-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+
+JWT_SECRET="una_clave_muy_segura_que_nadie_debe_saber"
+'''

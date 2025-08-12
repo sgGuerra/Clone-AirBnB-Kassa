@@ -36,8 +36,8 @@ export default function CreateListingForm() {
       images: imagesArray,
     }
 
-    try {
-      const response = await fetch('http://localhost:5000/api/listings', { // <-- Endpoint corregido
+      try {
+      const response = await fetch('/api/listings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -57,6 +57,8 @@ export default function CreateListingForm() {
           pricePerNight: '',
           images: '',
         })
+        // Refrescar para que el perfil muestre la nueva propiedad
+        setTimeout(() => window.location.reload(), 600)
       } else {
         setMessage(`Error: ${result.error}`)
       }

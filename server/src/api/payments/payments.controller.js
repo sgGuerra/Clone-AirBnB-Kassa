@@ -1,11 +1,11 @@
 import * as service from './payments.service.js'
 
 export const initPayment = async (req, res) => {
-  const { bookingId, method } = req.body
+  const { bookingId, method, card } = req.body
   const userId = req.user.userId
   if (!bookingId) return res.status(400).json({ error: 'bookingId es requerido' })
   try {
-    const session = await service.createPaymentSession({ bookingId, userId, method })
+    const session = await service.createPaymentSession({ bookingId, userId, method, card })
     res.status(201).json(session)
   } catch (e) {
     res.status(400).json({ error: e.message })

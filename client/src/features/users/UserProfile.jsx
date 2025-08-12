@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import ListingCard from '../../components/ListingCard'; // Re-use the card component
+import CreateListingForm from '../listings/CreateListingForm.jsx'
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);
@@ -52,6 +53,32 @@ export default function UserProfile() {
           <span className={`mt-2 inline-block px-3 py-1 rounded-full text-white text-sm font-semibold ${user.role === 'host' ? 'bg-green-600' : 'bg-blue-600'}`}>
             {user.role === 'host' ? 'Anfitrión' : 'Huésped'}
           </span>
+          {user.role !== 'host' && (
+            <button
+              className="ml-3 mt-2 text-sm border rounded px-3 py-1 hover:bg-gray-50"
+              onClick={async () => {
+                try {
+                  const token = localStorage.getItem('authToken')
+                  const res = await fetch('/api/auth/upgrade-to-host', {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${token}` },
+                  })
+                  const data = await res.json()
+                  if (!res.ok) throw new Error(data.error || 'No se pudo actualizar el rol')
+                  if (data.token && data.user) {
+                    localStorage.setItem('authToken', data.token)
+                    localStorage.setItem('user', JSON.stringify(data.user))
+                  }
+                  // Refrescar perfil
+                  window.location.reload()
+                } catch (e) {
+                  alert(e.message)
+                }
+              }}
+            >
+              Convertirme en anfitrión
+            </button>
+          )}
         </div>
       </div>
 
@@ -62,12 +89,36 @@ export default function UserProfile() {
           {user.properties.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {user.properties.map(prop => (
-                <ListingCard key={prop.id} listing={prop} />
+                <div key={prop.id} className="relative">
+                  <ListingCard listing={prop} />
+                  <button
+                    className="absolute top-2 left-2 bg-white/90 border rounded px-2 py-1 text-xs hover:bg-white"
+                    onClick={async (e) => {
+                      e.preventDefault()
+                      if (!confirm('¿Eliminar esta propiedad?')) return
+                      try {
+                        const token = localStorage.getItem('authToken')
+                        const res = await fetch(`/api/listings/${prop.id}`, {
+                          method: 'DELETE',
+                          headers: { Authorization: `Bearer ${token}` },
+                        })
+                        const data = await res.json()
+                        if (!res.ok) throw new Error(data.error || 'No se pudo eliminar')
+                        window.location.reload()
+                      } catch (err) {
+                        alert(err.message)
+                      }
+                    }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               ))}
             </div>
           ) : (
             <p className="text-gray-500">Aún no has publicado ninguna propiedad.</p>
           )}
+          <CreateListingForm />
         </div>
       )}
 

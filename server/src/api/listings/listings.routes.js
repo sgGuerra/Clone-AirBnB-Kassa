@@ -8,5 +8,6 @@ const router = Router()
 router.get('/', controller.getAllListings)
 router.get('/:id', controller.getListingById)
 router.post('/', authenticate, authorize('host'), controller.createListing)
+router.delete('/:id', authenticate, authorize('host'), controller.deleteListing)
 
 export default router

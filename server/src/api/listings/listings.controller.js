@@ -48,3 +48,20 @@ export const createListing = async (req, res) => {
     res.status(500).json({ error: 'Error al crear la propiedad' })
   }
 }
+
+export const deleteListing = async (req, res) => {
+  const { id } = req.params
+  const { userId } = req.user
+  try {
+    const listing = await service.findById(Number(id))
+    if (!listing) return res.status(404).json({ error: 'Propiedad no encontrada' })
+    if (listing.userId !== userId) {
+      return res.status(403).json({ error: 'Solo el propietario puede eliminar esta propiedad' })
+    }
+    await service.remove(Number(id))
+    res.json({ ok: true })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'Error al eliminar la propiedad' })
+  }
+}

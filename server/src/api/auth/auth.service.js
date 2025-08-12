@@ -71,3 +71,13 @@ export const findProfileById = (userId) => {
     },
   })
 }
+
+export const setUserRole = async (userId, role) => {
+  if (!['guest', 'host'].includes(role)) {
+    throw new Error('Rol inválido')
+  }
+  return prisma.user.update({
+    where: { id: userId },
+    data: { role },
+  })
+}
