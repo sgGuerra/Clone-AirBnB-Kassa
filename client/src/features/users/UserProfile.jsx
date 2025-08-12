@@ -85,12 +85,33 @@ export default function UserProfile() {
                   <p className="text-gray-700 mt-1">
                     <strong>Fechas:</strong> {new Date(booking.startDate).toLocaleDateString()} - {new Date(booking.endDate).toLocaleDateString()}
                   </p>
-                  <p className="text-gray-700"><strong>Total:</strong> ${booking.totalPrice.toFixed(2)}</p>
+                  <p className="text-gray-700"><strong>Total:</strong> {new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(booking.totalPrice)}</p>
                 </div>
-                <div className="flex-shrink-0">
-                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                    {booking.status === 'confirmed' ? 'Confirmada' : 'Cancelada'}
+                <div className="flex-shrink-0 flex items-center gap-2">
+                  <span className={`px-3 py-1 text-xs font-semibold rounded-full ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status === 'pending_payment' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'}`}>
+                    {booking.status === 'confirmed' ? 'Confirmada' : booking.status === 'pending_payment' ? 'Pendiente de pago' : 'Cancelada'}
                   </span>
+                  {(booking.status === 'confirmed' || booking.status === 'pending_payment') && (
+                    <button
+                      className="text-sm border rounded px-3 py-1 hover:bg-gray-50"
+                      onClick={async () => {
+                        try {
+                          const token = localStorage.getItem('authToken')
+                          const res = await fetch(`/api/bookings/${booking.id}/cancel`, {
+                            method: 'PATCH',
+                            headers: { Authorization: `Bearer ${token}` },
+                          })
+                          const data = await res.json()
+                          if (!res.ok) throw new Error(data.error || 'No se pudo cancelar')
+                          window.location.reload()
+                        } catch (e) {
+                          alert(e.message)
+                        }
+                      }}
+                    >
+                      Cancelar
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const ListingDetailsPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { token } = useAuth();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [guests, setGuests] = useState(1);
 
   useEffect(() => {
     const fetchListingDetails = async () => {
@@ -62,15 +68,48 @@ const ListingDetailsPage = () => {
           <p className="mt-4 text-gray-700 whitespace-pre-wrap">{listing.description}</p>
         </div>
 
-        {/* Booking Widget Placeholder */}
+        {/* Booking Widget */}
         <div className="md:col-span-1">
           <div className="sticky top-24 p-6 border rounded-xl shadow-lg">
-            <p className="text-2xl font-bold">${listing.pricePerNight} <span className="font-normal text-lg">/ noche</span></p>
-            <div className="mt-4 border rounded-lg p-2">
-                <p><strong>Fechas y Huéspedes</strong></p>
-                <p className="text-sm text-gray-500">Aquí irá el selector de fechas y huéspedes.</p>
+            <p className="text-2xl font-bold">{new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(listing.pricePerNight)} <span className="font-normal text-lg">/ noche</span></p>
+            <div className="mt-4 border rounded-lg p-2 space-y-2">
+              <div>
+                <label className="text-sm text-gray-600">Entrada</label>
+                <input type="date" className="w-full border rounded px-2 py-1" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Salida</label>
+                <input type="date" className="w-full border rounded px-2 py-1" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sm text-gray-600">Huéspedes</label>
+                <input type="number" min={1} className="w-full border rounded px-2 py-1" value={guests} onChange={(e) => setGuests(Number(e.target.value))} />
+              </div>
             </div>
-            <button className="mt-4 w-full bg-red-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-red-600 transition">
+            <button
+              className="mt-4 w-full bg-kassa-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-kassa-primaryDark transition"
+              onClick={async () => {
+                try {
+                  if (!token) {
+                    navigate('/login')
+                    return
+                  }
+                  const res = await fetch('/api/bookings', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ propertyId: Number(id), startDate, endDate, guests }),
+                  })
+                  const data = await res.json()
+                  if (!res.ok) throw new Error(data.error || 'No se pudo crear la reserva')
+                  navigate(`/checkout/${data.id}`)
+                } catch (e) {
+                  alert(e.message)
+                }
+              }}
+            >
               Reservar
             </button>
           </div>

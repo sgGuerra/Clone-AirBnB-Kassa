@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ListingDetailsPage from './pages/ListingDetailsPage.jsx'
 import NotFoundPage from './pages/NotFoundPage.jsx'
+import CheckoutPage from './pages/CheckoutPage.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import './index.css'
 
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: 'profile',
         element: <ProfilePage />,
+      },
+      {
+        path: 'checkout/:bookingId',
+        element: <CheckoutPage />,
       },
       {
         path: 'login',

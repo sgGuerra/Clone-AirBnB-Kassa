@@ -39,9 +39,9 @@ model Booking {
   startDate  DateTime
   endDate    DateTime
   totalPrice Float
-  status     String   @default("confirmed") // "confirmed", "cancelled"
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id])
+  status     String   @default("confirmed") // "confirmed", "cancelled", "pending_payment"
+  guestId    Int
+  guest      User     @relation(fields: [guestId], references: [id])
   propertyId Int
   property   Property @relation(fields: [propertyId], references: [id])
   createdAt  DateTime @default(now())

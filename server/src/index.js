@@ -25,12 +25,16 @@ app.get('/api/health', (req, res) => {
 
 import listingsRouter from './api/listings/listings.routes.js'
 import authRouter from './api/auth/auth.routes.js'
+import bookingsRouter from './api/bookings/bookings.routes.js'
+import paymentsRouter from './api/payments/payments.routes.js'
 
 // ...
 
 // Aquí importaremos y usaremos las rutas modulares
 app.use('/api/listings', listingsRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/bookings', bookingsRouter)
+app.use('/api/payments', paymentsRouter)
 
 
 app.listen(PORT, () => {
