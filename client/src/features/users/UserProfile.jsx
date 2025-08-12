@@ -43,7 +43,7 @@ export default function UserProfile() {
   return (
     <div className="max-w-6xl mx-auto">
       <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-10">
-        <div className="w-24 h-24 bg-red-500 rounded-full flex items-center justify-center text-white text-4xl font-bold">
+        <div className="w-24 h-24 bg-kassa-primary rounded-full flex items-center justify-center text-white text-4xl font-bold shadow-soft">
           {user.name ? user.name[0].toUpperCase() : user.email[0].toUpperCase()}
         </div>
         <div>
@@ -58,7 +58,7 @@ export default function UserProfile() {
       {/* Properties Section */}
       {user.role === 'host' && (
         <div className="mb-12">
-          <h2 className="text-2xl font-bold text-gray-800 border-b pb-3 mb-6">Mis Propiedades</h2>
+          <h2 className="text-2xl font-bold text-gray-800 border-b border-white/60 pb-3 mb-6">Mis Propiedades</h2>
           {user.properties.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {user.properties.map(prop => (
@@ -73,11 +73,11 @@ export default function UserProfile() {
 
       {/* Bookings Section */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-800 border-b pb-3 mb-6">Mis Reservas</h2>
+        <h2 className="text-2xl font-bold text-gray-800 border-b border-white/60 pb-3 mb-6">Mis Reservas</h2>
         {user.bookings.length > 0 ? (
           <div className="space-y-6">
             {user.bookings.map(booking => (
-              <div key={booking.id} className="flex flex-col md:flex-row gap-4 border rounded-lg p-4 shadow-sm bg-white">
+              <div key={booking.id} className="flex flex-col md:flex-row gap-4 border border-white/50 rounded-xl p-4 shadow-soft bg-white/70 backdrop-blur-md">
                 <img src={booking.property.images[0]} alt={booking.property.title} className="w-full md:w-48 h-32 object-cover rounded-md"/>
                 <div className="flex-grow">
                   <p className="text-sm text-gray-500">{booking.property.location}</p>

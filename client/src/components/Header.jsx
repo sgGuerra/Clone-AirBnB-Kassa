@@ -1,54 +1,118 @@
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { UserCircleIcon } from '@heroicons/react/outline'; // Using heroicons for icons
+import { UserCircleIcon, SearchIcon } from '@heroicons/react/outline';
 
 const Header = ({ searchTerm, setSearchTerm }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const menuRef = useRef(null)
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const onClickAway = (e) => {
+      if (!menuRef.current) return
+      if (!menuRef.current.contains(e.target)) {
+        setIsMenuOpen(false)
+      }
+    }
+    document.addEventListener('click', onClickAway)
+    return () => document.removeEventListener('click', onClickAway)
+  }, [])
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md p-4">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="sticky top-0 z-50 bg-white/70 backdrop-blur-md supports-[backdrop-filter]:bg-white/50 border-b border-white/40">
+      <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center gap-3">
         {/* Logo */}
         <div className="flex-shrink-0">
-          <Link to="/" className="flex items-center space-x-2">
-            <img src="/home.svg" alt="Kassa Logo" className="h-8 w-auto text-red-500" />
-            <span className="text-2xl font-bold text-red-500 hidden md:block">Kassa</span>
+          <Link to="/" className="flex items-center gap-2">
+            <img src="/home.svg" alt="Kassa Logo" className="h-8 w-auto" />
+            <span className="text-2xl font-bold text-gray-900 hidden md:block">Kassa</span>
           </Link>
         </div>
 
-        {/* Search Bar */}
-        <div className="flex-1 mx-8 hidden sm:flex justify-center">
-          <div className="w-full max-w-md relative">
+        {/* Search pill */}
+        <div className="flex-1 flex justify-center">
+          <div className="hidden sm:flex items-center divide-x divide-white/40 bg-white/70 backdrop-blur-md shadow-lg border border-white/50 rounded-full pl-5 transition hover:bg-white/80">
             <input
               type="text"
-              placeholder="Buscar por ubicación..."
+              placeholder="¿A dónde?"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 border rounded-full shadow-sm focus:ring-red-500 focus:border-red-500 transition"
+              className="px-2 py-2 outline-none text-sm placeholder:text-gray-500 bg-transparent"
             />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 bg-red-500 text-white rounded-full p-1.5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
+            <button className="flex items-center gap-2 pl-4 pr-2 py-2">
+              <span className="text-sm text-gray-600">Cualquier semana · Cualquier huésped</span>
+              <span className="ml-2 inline-flex items-center justify-center rounded-full bg-rose-500 hover:bg-rose-600 text-white p-2 transition">
+                <SearchIcon className="h-4 w-4" />
+              </span>
+            </button>
           </div>
         </div>
 
         {/* User Menu */}
-        <div className="flex items-center space-x-4">
-          <nav className="hidden md:flex items-center space-x-4">
-            <Link to="/" className="text-gray-600 hover:text-gray-900 font-medium">Inicio</Link>
+        <div className="flex items-center gap-4">
+          <nav className="hidden md:flex items-center gap-4">
+            <Link to="/" className="text-gray-700 hover:text-gray-900 font-medium">Inicio</Link>
             {isAuthenticated && user?.role === 'host' && (
-              <Link to="/my-listings" className="text-gray-600 hover:text-gray-900 font-medium">Mis Propiedades</Link>
+              <Link to="/profile" className="text-gray-700 hover:text-gray-900 font-medium">Mis Propiedades</Link>
             )}
           </nav>
 
-          <div className="relative">
-            <button className="flex items-center space-x-2 border rounded-full p-2 hover:shadow-md transition">
+          <div className="relative" ref={menuRef}>
+            <button
+              aria-haspopup="menu"
+              aria-expanded={isMenuOpen}
+              onClick={() => setIsMenuOpen((v) => !v)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') setIsMenuOpen(false)
+              }}
+              className="flex items-center gap-2 border border-white/50 bg-white/60 backdrop-blur-md rounded-full py-2 pl-3 pr-4 hover:shadow-lg transition"
+            >
               <UserCircleIcon className="h-6 w-6 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">{isAuthenticated ? user.name || user.email.split('@')[0] : 'Menu'}</span>
+              <span className="text-sm font-medium text-gray-700">{isAuthenticated ? (user.name || user.email.split('@')[0]) : 'Menú'}</span>
             </button>
-            {/* Dropdown placeholder */}
+            {isMenuOpen && (
+              <div
+                role="menu"
+                className="absolute right-0 mt-2 w-56 rounded-xl border border-white/60 bg-white/80 backdrop-blur-md shadow-lg overflow-hidden z-50"
+              >
+                {isAuthenticated ? (
+                  <div className="py-1">
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/profile')
+                      }}
+                    >
+                      Perfil
+                    </button>
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-50"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        logout()
+                      }}
+                    >
+                      Cerrar sesión
+                    </button>
+                  </div>
+                ) : (
+                  <div className="py-1">
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      onClick={() => {
+                        setIsMenuOpen(false)
+                        navigate('/login')
+                      }}
+                    >
+                      Iniciar sesión
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

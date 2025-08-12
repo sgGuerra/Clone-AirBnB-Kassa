@@ -11,7 +11,7 @@ const ListingDetailsPage = () => {
     const fetchListingDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`/api/listings/${id}`);
+        const response = await fetch(`/api/listings/${id}`, { cache: 'no-store' });
         if (!response.ok) {
           throw new Error('Property not found');
         }

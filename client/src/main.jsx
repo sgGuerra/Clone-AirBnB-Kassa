@@ -6,32 +6,41 @@ import HomePage from './pages/HomePage.jsx'
 import ProfilePage from './pages/ProfilePage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import ListingDetailsPage from './pages/ListingDetailsPage.jsx'
+import NotFoundPage from './pages/NotFoundPage.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import './index.css'
 
 // Define the application's routes using createBrowserRouter
 const router = createBrowserRouter([
   {
-    // The root path renders the App component, which acts as the main layout
-    // (including Header, Footer, and the Outlet for child routes).
+    // The root path renders the App wrapped with AuthProvider so that
+    // AuthContext can safely use react-router hooks like useNavigate.
     path: '/',
-    element: <App />,
+    element: (
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    ),
     children: [
       {
-        index: true, // The default child route to render at '/'
+        index: true,
         element: <HomePage />,
       },
       {
-        path: 'listings/:id', // Route for viewing a single property's details
+        path: 'listings/:id',
         element: <ListingDetailsPage />,
       },
       {
-        path: 'profile', // User profile page
+        path: 'profile',
         element: <ProfilePage />,
       },
       {
-        path: 'login', // Login and registration page
+        path: 'login',
         element: <LoginPage />,
+      },
+      {
+        path: '*',
+        element: <NotFoundPage />,
       },
     ],
   },
@@ -40,10 +49,6 @@ const router = createBrowserRouter([
 // The root of the React application
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    {/* AuthProvider makes authentication context available to the entire app */}
-    <AuthProvider>
-      {/* RouterProvider provides the routing configuration to the app */}
-      <RouterProvider router={router} />
-    </AuthProvider>
+    <RouterProvider router={router} />
   </React.StrictMode>,
 )

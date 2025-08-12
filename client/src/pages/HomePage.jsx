@@ -6,12 +6,12 @@ const HomePage = () => {
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { searchTerm } = useOutletContext();
+  const { searchTerm, selectedCategory } = useOutletContext();
 
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await fetch('/api/listings');
+        const response = await fetch('/api/listings', { cache: 'no-store' });
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -29,13 +29,28 @@ const HomePage = () => {
   }, []);
 
   const filteredListings = useMemo(() => {
-    if (!searchTerm) {
-      return listings;
+    let result = listings;
+    if (searchTerm) {
+      result = result.filter((listing) =>
+        [listing.location, listing.title]
+          .filter(Boolean)
+          .some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
     }
-    return listings.filter((listing) =>
-      listing.location.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  }, [listings, searchTerm]);
+    if (selectedCategory) {
+      // Heurística: derivar categoría desde el título o ubicación
+      const mapCategory = (l) => {
+        const title = `${l.title} ${l.location}`.toLowerCase();
+        if (title.includes('playa')) return 'playa';
+        if (title.includes('centro')) return 'centro';
+        if (title.includes('departamento') || title.includes('apto') || title.includes('apartamento')) return 'departamento';
+        if (title.includes('casa') || title.includes('chalet')) return 'casa';
+        return 'populares';
+      };
+      result = result.filter((l) => mapCategory(l) === selectedCategory);
+    }
+    return result;
+  }, [listings, searchTerm, selectedCategory]);
 
   if (loading) {
     return <div className="text-center py-10">🕵️‍♂️ Cargando alojamientos...</div>;
@@ -48,8 +63,8 @@ const HomePage = () => {
   return (
     <div>
       {filteredListings.length === 0 ? (
-        <div className="text-center py-10">
-          <h2 className="text-2xl font-semibold text-gray-800">No se encontraron alojamientos</h2>
+        <div className="text-center py-16">
+          <h2 className="text-2xl font-semibold text-gray-900">No se encontraron alojamientos</h2>
           <p className="text-gray-500 mt-2">Intenta con otra ubicación o borra la búsqueda.</p>
         </div>
       ) : (

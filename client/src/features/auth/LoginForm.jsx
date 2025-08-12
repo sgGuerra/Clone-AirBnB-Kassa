@@ -38,8 +38,8 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <div className="bg-white p-8 rounded-xl shadow-lg">
+    <div className="max-w-md mx-auto md:mt-10 w-full">
+      <div className="bg-white/70 backdrop-blur-md p-8 rounded-2xl shadow-soft border border-white/50">
         <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
           {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
         </h2>
@@ -58,7 +58,7 @@ export default function LoginForm() {
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+                className="w-full p-3 border border-white/60 bg-white/70 backdrop-blur-md rounded-lg focus:outline-none focus:ring-2 focus:ring-kassa-primary"
               />
             </div>
           )}
@@ -68,7 +68,7 @@ export default function LoginForm() {
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-3 border border-white/60 bg-white/70 backdrop-blur-md rounded-lg focus:outline-none focus:ring-2 focus:ring-kassa-primary"
               required
             />
           </div>
@@ -79,14 +79,14 @@ export default function LoginForm() {
               type="password"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-400"
+              className="w-full p-3 border border-white/60 bg-white/70 backdrop-blur-md rounded-lg focus:outline-none focus:ring-2 focus:ring-kassa-primary"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-red-500 text-white font-bold py-3 rounded-lg hover:bg-red-600 transition-transform transform hover:scale-105"
+            className="w-full bg-kassa-primary text-white font-bold py-3 rounded-lg hover:bg-kassa-primaryDark transition-transform transform hover:scale-[1.01]"
           >
             {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
           </button>
@@ -95,7 +95,7 @@ export default function LoginForm() {
         <div className="mt-6 text-center">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-red-500 hover:underline font-medium"
+            className="text-kassa-primary hover:underline font-medium"
           >
             {isLogin ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión'}
           </button>
