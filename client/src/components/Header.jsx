@@ -9,6 +9,8 @@ const Header = ({ searchTerm, setSearchTerm }) => {
   const menuRef = useRef(null)
   const navigate = useNavigate()
 
+  const displayName = user?.name || user?.email?.split('@')[0] || 'Usuario'
+
   useEffect(() => {
     const onClickAway = (e) => {
       if (!menuRef.current) return
@@ -70,7 +72,7 @@ const Header = ({ searchTerm, setSearchTerm }) => {
               className="flex items-center gap-2 border border-white/50 bg-white/60 backdrop-blur-md rounded-full py-2 pl-3 pr-4 hover:shadow-lg transition"
             >
               <UserCircleIcon className="h-6 w-6 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">{isAuthenticated ? (user.name || user.email.split('@')[0]) : 'Menú'}</span>
+              <span className="text-sm font-medium text-gray-700">{isAuthenticated && user ? displayName : 'Menú'}</span>
             </button>
             {isMenuOpen && (
               <div
