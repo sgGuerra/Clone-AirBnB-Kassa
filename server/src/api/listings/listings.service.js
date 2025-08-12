@@ -8,6 +8,12 @@ export const findAll = () => {
   })
 }
 
+export const findById = (id) => {
+  return prisma.property.findUnique({
+    where: { id },
+  })
+}
+
 export const create = (listingData) => {
   return prisma.property.create({
     data: listingData,

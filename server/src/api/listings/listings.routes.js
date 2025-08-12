@@ -6,6 +6,7 @@ import { authorize } from '../../middleware/authorization.js'
 const router = Router()
 
 router.get('/', controller.getAllListings)
+router.get('/:id', controller.getListingById)
 router.post('/', authenticate, authorize('host'), controller.createListing)
 
 export default router

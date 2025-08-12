@@ -1,8 +1,6 @@
 // server/middleware/auth.js
 import jwt from 'jsonwebtoken'
 
-const JWT_SECRET = process.env.JWT_SECRET
-
 export const authenticate = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1] // "Bearer TOKEN"
 
@@ -11,7 +9,11 @@ export const authenticate = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET)
+    const secret = process.env.JWT_SECRET
+    if (!secret) {
+      return res.status(500).json({ error: 'Configuración inválida del servidor (JWT_SECRET faltante)' })
+    }
+    const decoded = jwt.verify(token, secret)
     req.user = decoded // Guarda el usuario en la solicitud
     next()
   } catch (error) {
